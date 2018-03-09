@@ -56,6 +56,8 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     private String currentUserID;
 
+    //Successfully added to github
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

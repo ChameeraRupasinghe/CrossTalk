@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1096751043898",
+    "firebase_url": "https://crosstalk-25904.firebaseio.com",
+    "project_id": "crosstalk-25904",
+    "storage_bucket": "crosstalk-25904.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096751043898:android:a78c1f21e9497969",
+        "android_client_info": {
+          "package_name": "cse15.chameera.crosstalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096751043898-a0umfbvfatig9c87gsimtd48jn5jsnb0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cse15.chameera.crosstalk",
+            "certificate_hash": "f943f98fa2014c21881756d465e9d614c119a752"
+          }
+        },
+        {
+          "client_id": "1096751043898-k2a2sioq4f4ij4pespd5m438refes4gn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7dj199Pb_Qy_ZHL1j2NcBT2iICR7Qc7g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096751043898-k2a2sioq4f4ij4pespd5m438refes4gn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

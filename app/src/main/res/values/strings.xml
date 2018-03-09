@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CrossTalk</string>
+    <string name="title_activity_user_map">Map</string>
+    <string name="title_activity_default_maps">Map</string>
+    <string name="title_activity_default_map_drawer">DefaultMapDrawer</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>

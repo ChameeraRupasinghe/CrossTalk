@@ -56,7 +56,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     private String currentUserID;
 
-    //Successfully added to github
+
 
 
     @Override
@@ -130,10 +130,11 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
                 if (key != FirebaseAuth.getInstance().getCurrentUser().getUid()) {
                     nearbyUsers.add(key);
+                    Log.i("currentUser", "Current user is "+FirebaseAuth.getInstance().getCurrentUser().getUid());
                     Log.i("onKeyEntered: ", "UserID found" + key + " array size is" + nearbyUsers.size());
 
                 }
-                markNearbyUsers();
+                //markNearbyUsers();
             }
 
             @Override
@@ -160,8 +161,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
             }
         });
-
-
 
 
     }

@@ -36,7 +36,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -51,12 +55,11 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     private ArrayList<String> nearbyUsers;
     private ArrayList<Marker> nearbyMarkers;
+    private HashMap<String, Marker> nearbyHashMap;
 
     private Button mLogout, mLookupUsers;
 
     private String currentUserID;
-
-
 
 
     @Override
@@ -99,13 +102,25 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                 nearbyUsers = new ArrayList<>();
                 nearbyMarkers = new ArrayList<>();
                 getNearbyUsers();
-               // markNearbyUsers();
+                // markNearbyUsers();
             }
         });
     }
 
 
     private void getNearbyUsers() {
+
+        if (nearbyHashMap != null) {
+            Iterator iterator = nearbyHashMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Marker> pair = (Map.Entry<String, Marker>) iterator.next();
+                pair.getValue().remove();
+            }
+
+            nearbyHashMap.clear();
+
+        } else
+            nearbyHashMap = new HashMap<>();
 
 
         DatabaseReference userLocation = FirebaseDatabase.
@@ -128,13 +143,20 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
             public void onKeyEntered(String key, GeoLocation location) {
                 userFound = true;
 
-                if (key != FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+                if (!Objects.equals(key, FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     nearbyUsers.add(key);
-                    Log.i("currentUser", "Current user is "+FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    Log.i("currentUser", "Current user is " + FirebaseAuth.getInstance().getCurrentUser().getUid());
                     Log.i("onKeyEntered: ", "UserID found" + key + " array size is" + nearbyUsers.size());
 
+
+                    Marker m = mMap.addMarker(new MarkerOptions().
+                            position(new LatLng(location.latitude, location.longitude)).title(key));
+
+                    nearbyHashMap.put(key, m);
+
                 }
-                markNearbyUsers();
+                //markNearbyUsers();
             }
 
             @Override
@@ -168,11 +190,12 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
     //new method to mark
 
     int i;
+
     //Adding markers to nearby users
     private void markNearbyUsers() {
-        Log.i( "markNearbyUsers: ", "nearbyUsers size"+nearbyUsers.size());
-        for ( i = 0; i < nearbyUsers.size(); i++) {
-            Log.i("markNearbyUsers: ", "Value of i is: "+i);
+        Log.i("markNearbyUsers: ", "nearbyUsers size" + nearbyUsers.size());
+        for (i = 0; i < nearbyUsers.size(); i++) {
+            Log.i("markNearbyUsers: ", "Value of i is: " + i);
 
             DatabaseReference userLocationRef = FirebaseDatabase.getInstance().getReference().
                     child("UserAvailable").child(nearbyUsers.get(i)).child("l");
@@ -192,20 +215,17 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
                         LatLng otherUserLocation = new LatLng(otherUserLat, otherUserLng);
 
-                        if(nearbyMarkers.size() > i){
+                        if (nearbyMarkers.size() > i) {
                             for (int j = 0; j < nearbyMarkers.size(); j++) {
                                 nearbyMarkers.get(j).remove();
                             }
                             nearbyMarkers.clear();
-                            Log.i("markNearbyUsers: ", "Cleared, Value of i is: "+i);
+                            Log.i("markNearbyUsers: ", "Cleared, Value of i is: " + i);
 
                         }
 
                         nearbyMarkers.add(mMap.addMarker(new MarkerOptions().
                                 position(otherUserLocation).title("Hello User")));
-
-
-
 
 
                     }

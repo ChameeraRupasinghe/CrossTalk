@@ -165,6 +165,8 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     }
 
+    //new method to mark
+
     int i;
     //Adding markers to nearby users
     private void markNearbyUsers() {

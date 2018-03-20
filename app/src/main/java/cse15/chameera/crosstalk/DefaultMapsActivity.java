@@ -134,7 +134,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                     Log.i("onKeyEntered: ", "UserID found" + key + " array size is" + nearbyUsers.size());
 
                 }
-                //markNearbyUsers();
+                markNearbyUsers();
             }
 
             @Override
@@ -191,6 +191,9 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                         LatLng otherUserLocation = new LatLng(otherUserLat, otherUserLng);
 
                         if(nearbyMarkers.size() > i){
+                            for (int j = 0; j < nearbyMarkers.size(); j++) {
+                                nearbyMarkers.get(j).remove();
+                            }
                             nearbyMarkers.clear();
                             Log.i("markNearbyUsers: ", "Cleared, Value of i is: "+i);
 

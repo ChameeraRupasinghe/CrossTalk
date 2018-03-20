@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener{
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -108,6 +108,11 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
     }
 
 
+
+
+    // Find nearby users
+
+
     private void getNearbyUsers() {
 
         if (nearbyHashMap != null) {
@@ -121,6 +126,8 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
         } else
             nearbyHashMap = new HashMap<>();
+
+
 
 
         DatabaseReference userLocation = FirebaseDatabase.
@@ -150,13 +157,19 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                     Log.i("onKeyEntered: ", "UserID found" + key + " array size is" + nearbyUsers.size());
 
 
+
                     Marker m = mMap.addMarker(new MarkerOptions().
-                            position(new LatLng(location.latitude, location.longitude)).title(key));
+                            position(new LatLng(location.latitude, location.longitude)).
+                            title(key));
+                    m.setTag(key);
+
 
                     nearbyHashMap.put(key, m);
 
                 }
                 //markNearbyUsers();
+
+
             }
 
             @Override
@@ -187,7 +200,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     }
 
-    //new method to mark
+
 
     int i;
 
@@ -254,6 +267,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
+        mMap.setOnMarkerClickListener( this);
 
     }
 
@@ -332,5 +346,16 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
         });
 
 
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        String markerUserID = marker.getTag().toString();
+
+        Intent intent =
+                new Intent(DefaultMapsActivity.this, ChatActivity.class);
+        startActivity(intent);
+
+        return false;
     }
 }

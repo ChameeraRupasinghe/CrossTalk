@@ -238,7 +238,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                         }
 
                         nearbyMarkers.add(mMap.addMarker(new MarkerOptions().
-                                position(otherUserLocation).title("Hello User")));
+                                position(otherUserLocation).title("Hello cse15.chameera.crosstalk.User")));
 
 
                     }
@@ -352,9 +352,15 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
     public boolean onMarkerClick(Marker marker) {
         String markerUserID = marker.getTag().toString();
 
-        Intent intent =
+
+        Bundle bundle = new Bundle();
+        bundle.putString("uid", markerUserID);
+        Intent intentbundle =
                 new Intent(DefaultMapsActivity.this, ChatActivity.class);
-        startActivity(intent);
+        intentbundle.putExtras(bundle);
+        startActivity(intentbundle);
+
+
 
         return false;
     }

@@ -37,6 +37,18 @@ tools:context="cse15.chameera.crosstalk.ChatActivity">
         />
 </android.support.design.widget.TextInputLayout>
 
+
+
+        <TextView
+            android:id="@+id/userIDText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="hi"
+            />
+
+
+
+
 <ListView
     android:layout_width="match_parent"
     android:layout_height="match_parent"

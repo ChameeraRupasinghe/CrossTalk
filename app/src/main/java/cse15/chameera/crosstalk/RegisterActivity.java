@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TimeUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,10 +17,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
+
+import Classes.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -91,6 +93,25 @@ public class RegisterActivity extends AppCompatActivity {
                                     String user_id = mAuth.getCurrentUser().getUid();
                                     DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("user").child(user_id);
                                     current_user_db.setValue(user);
+
+                                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                                    UserProfileChangeRequest profileUpdates = new
+                                            UserProfileChangeRequest.Builder()
+                                            .setDisplayName(name)
+                                            .build();
+
+                                    currentUser.updateProfile(profileUpdates)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Log.i("Username save", "Username Saved");
+                                                    }
+                                                }
+                                            });
+
+
+
                                 }
                             }
                         });

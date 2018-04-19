@@ -59,7 +59,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     private Button mLogout, mLookupUsers;
 
-    private String currentUserID;
+    private String currentUserID, currentUserName;
 
 
     @Override
@@ -76,7 +76,10 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
         currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+
         Log.i("Current user ID", currentUserID);
+
+
 
         //Logout Button
         mLogout = (Button) findViewById(R.id.Logout);
@@ -238,7 +241,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                         }
 
                         nearbyMarkers.add(mMap.addMarker(new MarkerOptions().
-                                position(otherUserLocation).title("Hello cse15.chameera.crosstalk.User")));
+                                position(otherUserLocation).title("Hello Classes.User")));
 
 
                     }

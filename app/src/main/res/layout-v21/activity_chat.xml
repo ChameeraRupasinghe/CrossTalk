@@ -20,7 +20,7 @@ tools:context="cse15.chameera.crosstalk.ChatActivity">
         android:background="@color/colorPrimary"
         app:titleTextColor="#FFF"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <RelativeLayout

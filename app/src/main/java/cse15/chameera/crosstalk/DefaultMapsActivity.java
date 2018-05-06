@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -43,7 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener{
+public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -80,7 +81,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
         Log.i("Current user ID", currentUserID);
 
 
-
         //Logout Button
         mLogout = (Button) findViewById(R.id.Logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
@@ -91,8 +91,11 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                         new Intent(DefaultMapsActivity.this, MainActivity.class);
                 startActivity(intent);
 
+                removeUserAvailability();
+
                 finish();
                 FirebaseAuth.getInstance().signOut();
+
                 return;
             }
         });
@@ -111,8 +114,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
     }
 
 
-
-
     // Find nearby users
 
 
@@ -129,8 +130,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
         } else
             nearbyHashMap = new HashMap<>();
-
-
 
 
         DatabaseReference userLocation = FirebaseDatabase.
@@ -158,7 +157,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
                     Log.i("currentUser", "Current user is " + FirebaseAuth.getInstance().getCurrentUser().getUid());
                     Log.i("onKeyEntered: ", "UserID found" + key + " array size is" + nearbyUsers.size());
-
 
 
                     Marker m = mMap.addMarker(new MarkerOptions().
@@ -202,7 +200,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
 
     }
-
 
 
     int i;
@@ -270,7 +267,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
-        mMap.setOnMarkerClickListener( this);
+        mMap.setOnMarkerClickListener(this);
 
     }
 
@@ -311,23 +308,25 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            mLastLocation = location;
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
 
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserAvailable");
+            String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserAvailable");
 //
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.setLocation(currentUserID, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
-            @Override
-            public void onComplete(String key, DatabaseError error) {
+            GeoFire geoFire = new GeoFire(ref);
+            geoFire.setLocation(currentUserID, new GeoLocation(location.getLatitude(), location.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }
 
 
     }
@@ -343,12 +342,32 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(currentUserID, new GeoFire.CompletionListener() {
             @Override
+
             public void onComplete(String key, DatabaseError error) {
-                Log.i("onComplete:", "user is " + currentUserID);
+                if (error != null) {
+                    Log.i("onComplete:", "user is " + currentUserID +
+                            "Error: " + error.toString());
+                }
             }
         });
 
 
+    }
+
+    public void removeUserAvailability(){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("UserAvailable");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(currentUserID, new GeoFire.CompletionListener() {
+            @Override
+            public void onComplete(String key, DatabaseError error) {
+                if (error != null) {
+                    Log.i("onComplete:", "user is " + currentUserID +
+                            "Error: " + error.toString());
+                    Toast.makeText(DefaultMapsActivity.this,
+                            "Error: "+ error.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -362,7 +381,6 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
                 new Intent(DefaultMapsActivity.this, ChatActivity.class);
         intentbundle.putExtras(bundle);
         startActivity(intentbundle);
-
 
 
         return false;

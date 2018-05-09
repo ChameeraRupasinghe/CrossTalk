@@ -9,7 +9,7 @@ android:id="@+id/activity_chat"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 
-tools:context="cse15.chameera.crosstalk.ChatActivity">
+>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/chat_toolbar"
@@ -69,7 +69,18 @@ tools:context="cse15.chameera.crosstalk.ChatActivity">
 
             android:layout_marginBottom="16dp"
             android:divider="@android:color/transparent"
-            android:dividerHeight="16dp" />
+            android:dividerHeight="16dp" >
+
+        </ListView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messages_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_above="@id/fab">
+
+        </android.support.v7.widget.RecyclerView>
     </RelativeLayout>
 
     <TextView

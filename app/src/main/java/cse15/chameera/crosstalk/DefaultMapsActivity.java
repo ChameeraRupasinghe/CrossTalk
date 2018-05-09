@@ -377,6 +377,7 @@ public class DefaultMapsActivity extends FragmentActivity implements OnMapReadyC
 
         Bundle bundle = new Bundle();
         bundle.putString("uid", markerUserID);
+        bundle.putString("current_UID", currentUserID);
         Intent intentbundle =
                 new Intent(DefaultMapsActivity.this, ChatActivity.class);
         intentbundle.putExtras(bundle);

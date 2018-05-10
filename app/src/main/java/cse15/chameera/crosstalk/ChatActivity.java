@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,14 +13,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import Classes.ChatMessage;
+import java.util.ArrayList;
+
 import Classes.UserManager;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
@@ -27,8 +30,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button mSendButton;
     private EditText mEditText;
+    private RecyclerView mChatRecyclerView;
 
     private DatabaseReference mDatabase, mChatDataBaseRef;
+    private MessageChatAdapter messageChatAdapter;
+    private ChildEventListener messageChatListner;
 
 
     @Override
@@ -84,10 +90,79 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         mSendButton = (Button) findViewById(R.id.btn_send);
         mEditText = (EditText) findViewById(R.id.edit_text_message);
+        mChatRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_chat);
 
         mSendButton.setOnClickListener(this);
 
+        setChatRecyclerView(mChatRecyclerView);
 
+
+    }
+
+    private void setChatRecyclerView(RecyclerView mChatRecyclerView) {
+        mChatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mChatRecyclerView.setHasFixedSize(true);
+        messageChatAdapter = new MessageChatAdapter(new ArrayList<ChatMessage>());
+        mChatRecyclerView.setAdapter(messageChatAdapter);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        messageChatListner = mChatDataBaseRef.limitToFirst(20).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                if(dataSnapshot.exists()){
+                    ChatMessage newMessage = dataSnapshot.getValue(ChatMessage.class);
+                    if(newMessage.getSender().equals(currentUserID)){
+                        newMessage.setSenderOrReciver(MessageChatAdapter.SENDER);
+                    }
+                    else {
+                        newMessage.setSenderOrReciver(MessageChatAdapter.RECEIVER);
+                    }
+                    messageChatAdapter.refillAdapter(newMessage);
+                    mChatRecyclerView.scrollToPosition(messageChatAdapter.getItemCount()-1);
+                }
+
+                else {
+                    Log.i("Data Snap", "data snapshot does nnot exist");
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(messageChatListner != null){
+            mChatDataBaseRef.removeEventListener(messageChatListner);
+        }
+        messageChatAdapter.cleanUp();
     }
 
     @Override
@@ -134,6 +209,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void setupDatabaseInstance() {
 
         String[] userCouple = UserManager.arrangeAlphabeticalOrder(currentUserID, reciverID);
+
+        Log.i("userArray", userCouple[0] + " and " + userCouple[1]);
 
         mChatDataBaseRef = mDatabase.child("ChatMessages").child(userCouple[0]).child(userCouple[1]);
 

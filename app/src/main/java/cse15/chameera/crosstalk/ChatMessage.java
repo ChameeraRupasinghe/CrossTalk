@@ -1,4 +1,4 @@
-package Classes;
+package cse15.chameera.crosstalk;
 
 public class ChatMessage {
 
@@ -7,9 +7,11 @@ public class ChatMessage {
     private String recipient;
     private int senderOrReciver;
 
+    public ChatMessage() {
+    }
 
 
-    public ChatMessage(String sender, String recipient, String message){
+    public ChatMessage(String sender, String recipient, String message) {
         this.message = message;
         this.sender = sender;
         this.recipient = recipient;
@@ -30,5 +32,9 @@ public class ChatMessage {
 
     public void setSenderOrReciver(int senderOrReciver) {
         this.senderOrReciver = senderOrReciver;
+    }
+
+    public int getSenderOrReciver() {
+        return senderOrReciver;
     }
 }
